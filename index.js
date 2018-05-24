@@ -27,8 +27,10 @@ controller.setupWebserver(process.env.PORT,function(err,webserver) {
     .createOauthEndpoints(controller.webserver, (err,req,res) => {
       if (err) {
         res.status(500).send('ERROR: ' + err)
+        console.log('Faild!')
       } else {
         res.send('Success!');
+        console.log('Success!')
       }
     })
     .createWebhookEndpoints(controller.webserver);
