@@ -55,17 +55,22 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   let genre = ''
   const askPlace = function (err, convo) {
     convo.ask('最寄り駅は？(ex:\'○○駅\')', function(response, convo) {
-      if (!!response.text) {
+      let match = response.text.match(/.*駅/g)
+      if (!!response.text && match) {
         place = response.text
         convo.say('It\'s nice.')
         askPrice(response, convo)
+        convo.next()
+      } else {
+        convo.say('フォーマットは\'○○駅\'だよ！')
+        askPlace(response, convo)
         convo.next()
       }
     })
   }
   const askPrice = function (response, convo) {
     convo.ask('予算はいくら以内？(半角+カンマなしで)', function(response, convo) {
-      let match = response.text.match('/[1-9]+\d+/g')
+      let match = response.text.match(/[1-9]+\d+/g)
       if (match) {
         price = match[0]
         convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
