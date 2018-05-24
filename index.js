@@ -142,7 +142,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  let jenresAction = []
+  let genresAction = []
   const askFoodGenre = (response, convo) => {
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
@@ -152,11 +152,11 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }
     }, (err, response, body) => {
       const json = JSON.parse(body)
-      const jenres = json.results.jenre
-      jenres.forEach(jenre => {
-        jenresAction.push({
-          "text": jenre.name,
-          "value": jenre.code
+      const genres = json.results.genre
+      genres.forEach(jenre => {
+        genresAction.push({
+          "text": genre.name,
+          "value": genre.code
         })
       })
       convo.next()
@@ -170,12 +170,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           fallback: "If you could read this message, you'd be choosing something fun to do right now.",
           color: "#3AA3E3",
           attachment_type: "default",
-          callback_id: "jenre_selection",
+          callback_id: "genre_selection",
           actions: {
-            name: "jenres_list",
+            name: "genres_list",
             text: "Pick a jenre...",
             type: "select",
-            options: [...jenresAction]
+            options: [...genresAction]
           }
         }
       ]
