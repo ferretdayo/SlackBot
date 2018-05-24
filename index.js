@@ -48,6 +48,28 @@ controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention
   })
 })
 
-controller.hears(['(.*)'], 'ambient,direct_message,direct_mention,mention', function (bot, message) {
-  bot.reply(message, JSON.stringify(message))
+controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'ambient,direct_message,direct_mention,mention', function (bot, message) {
+  var askPlace = function(err, convo) {
+    convo.ask('最寄り駅は？', function(response, convo) {
+       convo.say('It\'s nice.')
+       askPrice(response, convo)
+       convo.next()
+    })
+  }
+  var askPrice = function(response, convo) {
+      convo.ask('予算は？', function(response, convo) {
+        convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
+        askFoodGenre(response, convo)
+        convo.next()
+      })
+  };
+  var askFoodGenre = function(response, convo) {
+      convo.ask('料理のジャンルは？', function(response, convo) {
+        convo.say('Umm...It\'s ok.')
+        convo.next()
+      })
+  };
+
+  bot.startConversation(message, askFlavor);
+  // bot.reply(message, JSON.stringify(message))
 })
