@@ -1,5 +1,4 @@
-import { request } from 'https'
-
+const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
