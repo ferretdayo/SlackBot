@@ -1,3 +1,5 @@
+import { join } from 'when';
+
 const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
@@ -89,7 +91,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           genre = response.text
           convo.say('Umm...It\'s ok.')
         }
-        // showFoodList(response, convo)
+        showFoodList(response, convo)
         convo.next()
       })
   }
@@ -106,6 +108,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }
     }, (err, response, body) => {
       console.log(JSON.stringify(response))
+      convo.say(JSON.stringify(response))
       convo.next()
     })
   }
