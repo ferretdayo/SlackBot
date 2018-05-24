@@ -70,6 +70,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       })
   };
 
-  bot.startConversation(message, askFlavor);
+  bot.startConversation(message, askPlace);
   // bot.reply(message, JSON.stringify(message))
 })
