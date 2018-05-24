@@ -160,6 +160,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           "value": genre.code
         })
       })
+      console.log(JSON.stringify(genresAction))
       convo.ask({
         text: "料理のジャンルは？",
         response_type: "in_channel",
@@ -179,10 +180,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           }
         ]
       }, (response, convo) => {
-        if (!!response.actions[0].value) {
-          genre = response.actions[0].value
-          convo.say('Umm...It\'s ok.')
-        }
+        console.log("select genre")
+        genre = response.actions[0].value
+        convo.say('Umm...It\'s ok.')
         showFoodList(response, convo)
         convo.next()
       })
