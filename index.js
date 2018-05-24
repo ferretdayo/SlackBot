@@ -143,14 +143,14 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  const askFoodGenre = (response, convo) => {
+  const askFoodGenre = function (response, convo) {
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, (err, response, body) => {
+    }, function (err, response, body) {
       const json = JSON.parse(body)
       console.log(body)
       const genres = json.results.genre
@@ -179,7 +179,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
             }
           }
         ]
-      }, (response, convo) => {
+      }, function (response, convo) {
         console.log("select genre")
         genre = response.actions[0].value
         convo.say('Umm...It\'s ok.')
