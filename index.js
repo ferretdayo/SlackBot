@@ -101,7 +101,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       response_type: "in_channel",
       attachments: [
         {
-          text: "ジャンルを選んでください．",
+          text: "金額を選んでください．",
           fallback: "If you could read this message, you'd be choosing something fun to do right now.",
           color: "#3AA3E3",
           attachment_type: "default",
@@ -151,6 +151,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       ]
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
+      convo.say(price + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!")
       askFoodGenre(response, convo)
       convo.next()
     })
@@ -231,17 +232,17 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   bot.startConversation(message, askPlace)
 })
 
-controller.on('interactive_message_callback', function(bot, message) {
-  if (message.callback_id == "123") {
-    console.log("price handler")
-    bot.replyInteractive(message, {
-      "text": "I see.\n" + message.actions[0].value + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!"
-    })
-  }
-  if (message.callback_id == "genre_selection") {
-    console.log("genre handler")
-    bot.replyInteractive(message, {
-      "text": "I see.\n"
-    })
-  }
-})
+// controller.on('interactive_message_callback', function(bot, message) {
+//   if (message.callback_id == "123") {
+//     console.log("price handler")
+//     bot.replyInteractive(message, {
+//       "text": "I see.\n" + message.actions[0].value + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!"
+//     })
+//   }
+//   if (message.callback_id == "genre_selection") {
+//     console.log("genre handler")
+//     bot.replyInteractive(message, {
+//       "text": "I see.\n"
+//     })
+//   }
+// })
