@@ -173,9 +173,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
             callback_id: "genre_selection",
             actions: {
               name: "genres_list",
-              text: "Pick a jenre...",
+              text: "Pick a genre...",
               type: "select",
-              options: [...genresAction]
+              options: [genresAction[0], genresAction[1], genresAction[2]]
             }
           }
         ]
