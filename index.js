@@ -49,7 +49,7 @@ controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention
   })
 })
 
-controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'ambient,direct_message,direct_mention,mention', function (bot, message) {
+controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'direct_message,direct_mention,mention', function (bot, message) {
   let place = ''
   let price = 0
   let genre = ''
@@ -102,11 +102,11 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         budget: {
           average: '〜' + price
         },
-        order: 4
+        order: 4,
+        format: 'json'
       }
     }, (err, response, body) => {
       console.log(JSON.stringify(response))
-      convo.say(JSON.stringify(response))
       convo.next()
     })
   }
