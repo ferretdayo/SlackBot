@@ -55,15 +55,10 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   let genre = ''
   const askPlace = function (err, convo) {
     convo.ask('最寄り駅は？(ex:\'○○駅\')', function(response, convo) {
-      let match = response.text.match('/.*駅/g')
-      if (!!response.text && match) {
+      if (!!response.text) {
         place = response.text
         convo.say('It\'s nice.')
         askPrice(response, convo)
-        convo.next()
-      } else {
-        convo.say('フォーマットは\'○○駅\'だよ！')
-        askPlace(response, convo)
         convo.next()
       }
     })
