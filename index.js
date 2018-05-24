@@ -2,7 +2,7 @@ const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
-if (!process.env.token || !process.env.hotpepper_api_key || !process.env.client_id || !process.env.client_secret) {
+if (!process.env.token || !process.env.hotpepper_api_key || !process.env.client_id || !process.env.client_secret || !process.env.PORT) {
   console.log('Error: Specify token in environment')
   process.exit(1)
 }
