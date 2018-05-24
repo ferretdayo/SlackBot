@@ -19,6 +19,23 @@ const controller = Botkit.slackbot({
   }
 )
 
+controller.setupWebserver(process.env.PORT,function(err,webserver) {
+
+  // set up web endpoints for oauth, receiving webhooks, etc.
+  controller
+    .createHomepageEndpoint(controller.webserver)
+    .createOauthEndpoints(controller.webserver, (err,req,res) => {
+      if (err) {
+        res.status(500).send('ERROR: ' + err)
+      } else {
+        res.send('Success!');
+      }
+    })
+    .createWebhookEndpoints(controller.webserver);
+
+});
+
+
 const bot = controller.spawn({
   token: process.env.token
 }).startRTM()
