@@ -110,7 +110,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       console.log(JSON.stringify(json.results.shop))
       let shops = json.results.shop
       shops.forEach(shop => {
-        convo.say(shop.name + ", " + shop.urls.pc)
+        bot.reply(message, shop.name + ", " + shop.urls.pc)
       })
       convo.next()
     })
