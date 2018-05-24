@@ -150,7 +150,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, function (err, response, body) {
+    }, (err, response, body) => {
       const json = JSON.parse(body)
       console.log(body)
       const genres = json.results.genre
