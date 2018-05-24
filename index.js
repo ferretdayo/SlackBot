@@ -97,46 +97,48 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
   const askPrice = (response, convo) => {
     convo.ask({
-      attachments:[
+      text: "予算はいくら以内？",
+      response_type: "in_channel",
+      attachments: [
         {
-          title: '予算はいくら以内？',
-          callback_id: '123',
-          attachment_type: 'default',
+          text: "ジャンルを選んでください．",
+          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+          color: "#3AA3E3",
+          attachment_type: "default",
+          callback_id: "123",
           actions: [
             {
-                "name":"1000",
-                "text": "1000円以内",
-                "value": "1000",
-                "type": "button",
-            },
-            {
-                "name":"2000",
-                "text": "2000円以内",
-                "value": "2000",
-                "type": "button",
-            },
-            {
-                "name":"2500",
-                "text": "2500円以内",
-                "value": "2500",
-                "type": "button",
-            },
-            {
-                "name":"3000",
-                "text": "3000円以内",
-                "value": "3000",
-                "type": "button",
-            },
-            {
-                "name":"4000",
-                "text": "4000円以内",
-                "value": "4000",
-                "type": "button",
+              name: "prices_list",
+              text: "Pick a price...",
+              type: "select",
+              options: [
+                {
+                  "text": "1000円以内",
+                  "value": "1000"
+                },
+                {
+                    "text": "2000円以内",
+                    "value": "2000"
+                },
+                {
+                    "text": "2500円以内",
+                    "value": "2500"
+                },
+                {
+                    "text": "3000円以内",
+                    "value": "3000"
+                },
+                {
+                    "text": "4000円以内",
+                    "value": "4000"
+                }
+              ]
             }
           ]
         }
       ]
     }, (response, convo) => {
+      console.log("aaaaaa"+ JSON.stringify(response))
       price = response.actions[0].value
       askFoodGenre(response, convo)
       convo.next()
@@ -182,8 +184,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           }
         ]
       }, (response, convo) => {
-        console.log("select genre")
-        genre = response.actions[0].value
+        console.log("select genre", JSON.stringify(response))
+        genre = response.actions[0].text
         convo.say('Umm...It\'s ok.')
         showFoodList(response, convo)
         convo.next()
