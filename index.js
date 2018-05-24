@@ -142,7 +142,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  let genresAction = []
   const askFoodGenre = (response, convo) => {
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
@@ -154,7 +153,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       const json = JSON.parse(body)
       console.log(body)
       const genres = json.results.genre
-      genres.forEach(jenre => {
+      let genresAction = []
+      genres.forEach(genre => {
         genresAction.push({
           "text": genre.name,
           "value": genre.code
@@ -186,7 +186,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         showFoodList(response, convo)
         convo.next()
       })
-      convo.next()
     })
     // convo.ask('料理のジャンルは？', (response, convo) => {
     //   if (!!response.text) {
