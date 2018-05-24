@@ -143,14 +143,14 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  const askFoodGenre = function (response, convo) {
+  const askFoodGenre = (response, convo) => {
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, function (err, response, body) {
+    }, (err, response, body) => {
       const json = JSON.parse(body)
       console.log(body)
       const genres = json.results.genre
@@ -162,9 +162,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         })
       })
       convo.ask({
+        text: "料理のジャンルは？",
+        response_type: "in_channel",
         attachments: [
           {
             text: "ジャンルを選んでください．",
+            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
             color: "#3AA3E3",
             attachment_type: "default",
             callback_id: "genre_selection",
@@ -172,18 +175,17 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
               name: "genres_list",
               text: "Pick a genre...",
               type: "select",
-              options: [...genresAction]
+              options: JSON.stringify([...genresAction])
             }
           }
         ]
-      }, function (response, convo) {
+      }, (response, convo) => {
         console.log("select genre")
         genre = response.actions[0].value
         convo.say('Umm...It\'s ok.')
         showFoodList(response, convo)
         convo.next()
       })
-      convo.next()
     })
     // convo.ask('料理のジャンルは？', (response, convo) => {
     //   if (!!response.text) {
