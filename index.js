@@ -1,5 +1,3 @@
-import { join } from 'when';
-
 const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
