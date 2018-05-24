@@ -171,12 +171,14 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
             color: "#3AA3E3",
             attachment_type: "default",
             callback_id: "genre_selection",
-            actions: {
-              name: "genres_list",
-              text: "Pick a genre...",
-              type: "select",
-              options: [...genresAction]
-            }
+            actions: [
+              {
+                name: "genres_list",
+                text: "Pick a genre...",
+                type: "select",
+                options: [...genresAction]
+              }
+            ]
           }
         ])
       }, (response, convo) => {
