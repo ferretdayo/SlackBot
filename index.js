@@ -106,12 +106,11 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }, (err, response, body) => {
-      console.log(JSON.stringify(body))
-      let shops = response.body.results.shop
+      console.log(JSON.stringify(body.results))
+      let shops = body.results.shop
       shops.forEach(shop => {
         convo.say(shop.name + ", " + shop.urls.pc)
       })
-      console.log(JSON.stringify(response))
       convo.next()
     })
   }
