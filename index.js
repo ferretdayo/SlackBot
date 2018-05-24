@@ -89,26 +89,26 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           genre = response.text
           convo.say('Umm...It\'s ok.')
         }
-        showFoodList(response, convo)
+        // showFoodList(response, convo)
         convo.next()
       })
   }
-  const showFoodList = function (response, convo) {
-    request.get({
-      url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
-      qs: {
-        key: process.env.hotpepper_api_token,
-        keyword: place + ',' + genre,
-        budget: {
-          average: '〜' + price
-        },
-        order: 4
-      }
-    }, (err, response, body) => {
-      convo.say(JSON.stringify(response))
-      convo.next()
-    })
-  }
+  // const showFoodList = function (response, convo) {
+  //   request.get({
+  //     url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
+  //     qs: {
+  //       key: process.env.hotpepper_api_token,
+  //       keyword: place + ',' + genre,
+  //       budget: {
+  //         average: '〜' + price
+  //       },
+  //       order: 4
+  //     }
+  //   }, (err, response, body) => {
+  //     convo.say(JSON.stringify(response))
+  //     convo.next()
+  //   })
+  // }
 
   bot.startConversation(message, askPlace)
   // bot.reply(message, JSON.stringify(message))
