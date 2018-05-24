@@ -95,9 +95,10 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }
     })
   }
+
   const askPrice = (response, convo) => {
     convo.ask({
-      text: "予算はいくら以内？",
+      text: "予算はいくら以内ですか？",
       response_type: "in_channel",
       attachments: [
         {
@@ -153,8 +154,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       price = response.actions[0].selected_options[0].value
       convo.say(price + " yen...\nHey, wealthy people! I spend too much money on meals. \nGive me money!")
       askFoodGenre(response, convo)
-      convo.next()
     })
+    convo.next()
   }
 
   const askFoodGenre = (response, convo) => {
