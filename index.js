@@ -163,11 +163,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       })
       convo.ask({
         text: "料理のジャンルは？",
-        response_type: "in_channel",
         attachments: [
           {
             text: "ジャンルを選んでください．",
-            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
             color: "#3AA3E3",
             attachment_type: "default",
             callback_id: "genre_selection",
