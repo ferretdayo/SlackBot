@@ -113,8 +113,16 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
               type: "select",
               options: [
                 {
+                  "text": "500円以内",
+                  "value": "500"
+                },
+                {
                   "text": "1000円以内",
                   "value": "1000"
+                },
+                {
+                  "text": "1500円以内",
+                  "value": "1500"
                 },
                 {
                     "text": "2000円以内",
@@ -129,6 +137,10 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
                     "value": "3000"
                 },
                 {
+                    "text": "3500円以内",
+                    "value": "3500"
+                },
+                {
                     "text": "4000円以内",
                     "value": "4000"
                 }
@@ -138,8 +150,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         }
       ]
     }, (response, convo) => {
-      console.log("aaaaaa"+ JSON.stringify(response))
-      price = response.actions[0].value
+      price = response.actions[0].selected_options[0].value
       askFoodGenre(response, convo)
       convo.next()
     })
@@ -154,7 +165,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }
     }, (err, response, body) => {
       const json = JSON.parse(body)
-      console.log(body)
       const genres = json.results.genre
       let genresAction = []
       genres.forEach(genre => {
@@ -184,21 +194,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           }
         ]
       }, (response, convo) => {
-        console.log("select genre", JSON.stringify(response))
-        genre = response.actions[0].text
+        genre = response.actions[0].selected_options[0].value
         convo.say('Umm...It\'s ok.')
         showFoodList(response, convo)
         convo.next()
       })
     })
-    // convo.ask('料理のジャンルは？', (response, convo) => {
-    //   if (!!response.text) {
-    //     genre = response.text
-    //     convo.say('Umm...It\'s ok.')
-    //   }
-    //   showFoodList(response, convo)
-    //   convo.next()
-    // })
   }
   
   const showFoodList = (response, convo) => {
