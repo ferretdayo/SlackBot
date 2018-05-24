@@ -108,7 +108,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       convo.say(JSON.stringify(response))
       convo.next()
     })
-    convo.next()
   }
 
   bot.startConversation(message, askPlace)
