@@ -2,14 +2,22 @@ const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
-if (!process.env.token || !process.env.hotpepper_api_key) {
+if (!process.env.token || !process.env.hotpepper_api_key || !process.env.client_id || !process.env.client_secret) {
   console.log('Error: Specify token in environment')
   process.exit(1)
 }
 
 const controller = Botkit.slackbot({
-  debug: true,
-})
+  // interactive_replies: true, // tells botkit to send button clicks into conversations
+  json_file_store: './db_slackbutton_bot/',
+  debug: true
+}).configureSlackApp(
+  {
+    clientId: process.env.client_id,
+    clientSecret: process.env.client_secret,
+    scopes: ['bot'],
+  }
+)
 
 const bot = controller.spawn({
   token: process.env.token
