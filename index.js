@@ -2,7 +2,7 @@ const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
-if (!process.env.token || !process.env.hotpepper_api_token) {
+if (!process.env.token || !process.env.hotpepper_api_key) {
   console.log('Error: Specify token in environment')
   process.exit(1)
 }
@@ -69,19 +69,19 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
   const askPrice = function (response, convo) {
-      convo.ask('予算はいくら以内？(半角+カンマなしで)', function(response, convo) {
-        let match = response.text.match('/[1-9]+\d+/g')
-        if (match) {
-          price = match[0]
-          convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
-          askFoodGenre(response, convo)
-          convo.next()
-        } else {
-          convo.say('ちゃんと予算入力しろや!')
-          askPrice(response, convo)
-          convo.next()
-        }
-      })
+    convo.ask('予算はいくら以内？(半角+カンマなしで)', function(response, convo) {
+      let match = response.text.match('/[1-9]+\d+/g')
+      if (match) {
+        price = match[0]
+        convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
+        askFoodGenre(response, convo)
+        convo.next()
+      } else {
+        convo.say('ちゃんと予算入力しろや!')
+        askPrice(response, convo)
+        convo.next()
+      }
+    })
   };
   const askFoodGenre = function (response, convo) {
       convo.ask('料理のジャンルは？', function(response, convo) {
@@ -93,22 +93,22 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         convo.next()
       })
   }
-  // const showFoodList = function (response, convo) {
-  //   request.get({
-  //     url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
-  //     qs: {
-  //       key: process.env.hotpepper_api_token,
-  //       keyword: place + ',' + genre,
-  //       budget: {
-  //         average: '〜' + price
-  //       },
-  //       order: 4
-  //     }
-  //   }, (err, response, body) => {
-  //     convo.say(JSON.stringify(response))
-  //     convo.next()
-  //   })
-  // }
+  const showFoodList = function (response, convo) {
+    request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
+      qs: {
+        key: process.env.hotpepper_api_key,
+        keyword: place + ',' + genre,
+        budget: {
+          average: '〜' + price
+        },
+        order: 4
+      }
+    }, (err, response, body) => {
+      convo.say(JSON.stringify(response))
+      convo.next()
+    })
+  }
 
   bot.startConversation(message, askPlace)
   // bot.reply(message, JSON.stringify(message))
