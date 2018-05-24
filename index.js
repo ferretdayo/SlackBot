@@ -104,21 +104,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           attachment_type: 'default',
           actions: [
             {
-                "name":"500",
-                "text": "500円以内",
-                "value": "500",
-                "type": "button",
-            },
-            {
-                "name":"100",
+                "name":"1000",
                 "text": "1000円以内",
                 "value": "1000",
-                "type": "button",
-            },
-            {
-                "name":"1500",
-                "text": "1500円以内",
-                "value": "1500",
                 "type": "button",
             },
             {
@@ -140,12 +128,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
                 "type": "button",
             },
             {
-                "name":"3500",
-                "text": "3500円以内",
-                "value": "3500",
-                "type": "button",
-            },
-            {
                 "name":"4000",
                 "text": "4000円以内",
                 "value": "4000",
@@ -155,21 +137,11 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         }]
       }, (response, convo) => {
         console.log(JSON.stringify(response))
+        price = response.actions[0].value
         askFoodGenre(response, convo)
         convo.next()
-      // let match = response.text.match(/[1-9]+\d+/g)
-      // if (match) {
-      //   price = match[0]
-      //   convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
-      //   askFoodGenre(response, convo)
-      //   convo.next()
-      // } else {
-      //   convo.say('ちゃんと予算入力しろや!')
-      //   askPrice(response, convo)
-      //   convo.next()
-      // }
     })
-  };
+  }
   const askFoodGenre = (response, convo) => {
       convo.ask('料理のジャンルは？', (response, convo) => {
         if (!!response.text) {
@@ -207,9 +179,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
 
 controller.on('interactive_message_callback', function(bot, message) {
   if (message.callback_id == "123") {
-    console.log(JSON.stringify(message))
     bot.replyInteractive(message, {
-      "text": JSON.stringify(message)
+      "text": "I see.\n" + message.actions[0].value + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!"
     })
   }
 })
