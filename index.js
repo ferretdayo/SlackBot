@@ -155,6 +155,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       convo.say(price + " yen...\nHey, wealthy people! I spend too much money on meals. \nGive me money!")
       askFoodGenre(response, convo)
       convo.next()
+      convo.next()
     })
   }
 
