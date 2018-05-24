@@ -105,7 +105,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         order: 4
       }
     }, (err, response, body) => {
-      bot.reply(JSON.stringify(response))
+      console.log(JSON.stringify(response))
       convo.next()
     })
   }
