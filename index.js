@@ -185,3 +185,11 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
 
   bot.startConversation(message, askPlace)
 })
+
+controller.on('interactive_message_callback', function(bot, message) {
+  if (message.callback_id == "123") {
+    bot.replyInteractive(message, {
+      "text": JSON.stringify(message)
+    })
+  }
+})
