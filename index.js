@@ -134,11 +134,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
                 "type": "button",
             }
           ]
-        }]
-      }, (response, convo) => {
-        price = response.actions[0].value
-        askFoodGenre(response, convo)
-        convo.next()
+        }
+      ]
+    }, (response, convo) => {
+      price = response.actions[0].value
+      askFoodGenre(response, convo)
+      convo.next()
     })
   }
 
@@ -160,7 +161,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           "value": genre.code
         })
       })
-      console.log(JSON.stringify(genresAction))
       convo.ask({
         text: "料理のジャンルは？",
         response_type: "in_channel",
@@ -175,7 +175,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
               name: "genres_list",
               text: "Pick a genre...",
               type: "select",
-              options: [genresAction[0], genresAction[1], genresAction[2]]
+              options: [...genresAction]
             }
           }
         ]
@@ -230,6 +230,11 @@ controller.on('interactive_message_callback', function(bot, message) {
   if (message.callback_id == "123") {
     bot.replyInteractive(message, {
       "text": "I see.\n" + message.actions[0].value + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!"
+    })
+  }
+  if (message.callback_id == "genre_selection") {
+    bot.replyInteractive(message, {
+      "text": "I see.\n"
     })
   }
 })
