@@ -53,8 +53,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   let place = ''
   let price = 0
   let genre = ''
-  const askPlace = function (err, convo) {
-    convo.ask('最寄り駅は？(ex:\'○○駅\')', function(response, convo) {
+  const askPlace = (err, convo) => {
+    convo.ask('最寄り駅は？(ex:\'○○駅\')', (response, convo) => {
       let match = response.text.match(/.*駅/g)
       if (!!response.text && match) {
         place = response.text
@@ -68,8 +68,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }
     })
   }
-  const askPrice = function (response, convo) {
-    convo.ask('予算はいくら以内？(半角+カンマなしで)', function(response, convo) {
+  const askPrice = (response, convo) => {
+    convo.ask('予算はいくら以内？(半角+カンマなしで)', (response, convo) => {
       let match = response.text.match(/[1-9]+\d+/g)
       if (match) {
         price = match[0]
@@ -83,8 +83,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }
     })
   };
-  const askFoodGenre = function (response, convo) {
-      convo.ask('料理のジャンルは？', function(response, convo) {
+  const askFoodGenre = (response, convo) => {
+      convo.ask('料理のジャンルは？', (response, convo) => {
         if (!!response.text) {
           genre = response.text
           convo.say('Umm...It\'s ok.')
@@ -93,7 +93,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         convo.next()
       })
   }
-  const showFoodList = function (response, convo) {
+  const showFoodList = (response, convo) => {
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
       qs: {
@@ -106,9 +106,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }, (err, response, body) => {
-      let json = JSON.parse(body)
-      console.log(JSON.stringify(json.results.shop))
-      let shops = json.results.shop
+      const json = JSON.parse(body)
+      const shops = json.results.shop
       shops.forEach(shop => {
         bot.reply(message, shop.name + ", " + shop.urls.pc)
       })
@@ -117,5 +116,4 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   bot.startConversation(message, askPlace)
-  // bot.reply(message, JSON.stringify(message))
 })
