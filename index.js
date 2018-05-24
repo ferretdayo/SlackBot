@@ -1,7 +1,9 @@
+import { request } from 'https'
+
 const Botkit = require('botkit')
 const os = require('os')
 
-if (!process.env.token) {
+if (!process.env.token || !process.env.hotpepper_api_token) {
   console.log('Error: Specify token in environment')
   process.exit(1)
 }
@@ -49,28 +51,65 @@ controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention
 })
 
 controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'ambient,direct_message,direct_mention,mention', function (bot, message) {
-  var askPlace = function(err, convo) {
-    convo.ask('最寄り駅は？', function(response, convo) {
-       convo.say('It\'s nice.')
-       askPrice(response, convo)
-       convo.next()
+  let place = ''
+  let price = 0
+  let genre = ''
+  const askPlace = function (err, convo) {
+    convo.ask('最寄り駅は？(ex:\'○○駅\')', function(response, convo) {
+      let match = response.text.match('/.*駅/g')
+      if (!!response.text && match) {
+        place = response.text
+        convo.say('It\'s nice.')
+        askPrice(response, convo)
+        convo.next()
+      } else {
+        convo.say('フォーマットは\'○○駅\'だよ！')
+        askPlace(response, convo)
+        convo.next()
+      }
     })
   }
-  var askPrice = function(response, convo) {
-      convo.ask('予算は？', function(response, convo) {
-        convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
-        askFoodGenre(response, convo)
-        convo.next()
+  const askPrice = function (response, convo) {
+      convo.ask('予算はいくら以内？(半角+カンマなしで)', function(response, convo) {
+        let match = response.text.match('/[1-9]+\d+/g')
+        if (match) {
+          price = match[0]
+          convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
+          askFoodGenre(response, convo)
+          convo.next()
+        } else {
+          convo.say('ちゃんと予算入力しろや!')
+          askPrice(response, convo)
+          convo.next()
+        }
       })
   };
-  var askFoodGenre = function(response, convo) {
+  const askFoodGenre = function (response, convo) {
       convo.ask('料理のジャンルは？', function(response, convo) {
-        convo.say('Umm...It\'s ok.')
-        convo.say(JSON.stringify(response))
+        if (!!response.text) {
+          genre = response.text
+          convo.say('Umm...It\'s ok.')
+        }
+        showFoodList(response, convo)
         convo.next()
       })
-  };
+  }
+  const showFoodList = function (response, convo) {
+    request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
+      qs: {
+        key: process.env.hotpepper_api_token,
+        keyword: place + ',' + genre,
+        budget: {
+          average: '〜' + price
+        },
+        order: 4
+      }
+    }, (err, response, body) => {
+      convo.say(JSON.stringify(response))
+    })
+  }
 
-  bot.startConversation(message, askPlace);
+  bot.startConversation(message, askPlace)
   // bot.reply(message, JSON.stringify(message))
 })
