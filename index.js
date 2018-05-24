@@ -66,6 +66,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   var askFoodGenre = function(response, convo) {
       convo.ask('料理のジャンルは？', function(response, convo) {
         convo.say('Umm...It\'s ok.')
+        bot.reply(message, JSON.stringify(convo))
+        bot.reply(message, JSON.stringify(response))
         convo.next()
       })
   };
