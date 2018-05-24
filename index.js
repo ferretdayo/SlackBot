@@ -183,6 +183,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         showFoodList(response, convo)
         convo.next()
       })
+      convo.next()
     })
     // convo.ask('料理のジャンルは？', (response, convo) => {
     //   if (!!response.text) {
