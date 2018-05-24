@@ -49,5 +49,5 @@ controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention
 })
 
 controller.hears(['(.*)'], 'direct_message,direct_mention,mention', function (bot, message) {
-  bot.reply(message, message)
+  bot.reply(message, JSON.stringify(message))
 })
