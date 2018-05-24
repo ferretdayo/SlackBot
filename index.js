@@ -69,18 +69,78 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
   const askPrice = (response, convo) => {
-    convo.ask('予算はいくら以内？(半角+カンマなしで)', (response, convo) => {
-      let match = response.text.match(/[1-9]+\d+/g)
-      if (match) {
-        price = match[0]
-        convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
+    convo.ask({
+      attachments:[
+        {
+          title: '予算はいくら以内？',
+          callback_id: '123',
+          attachment_type: 'default',
+          actions: [
+            {
+                "name":"500",
+                "text": "500円以内",
+                "value": "500",
+                "type": "button",
+            },
+            {
+                "name":"100",
+                "text": "1000円以内",
+                "value": "1000",
+                "type": "button",
+            },
+            {
+                "name":"1500",
+                "text": "1500円以内",
+                "value": "1500",
+                "type": "button",
+            },
+            {
+                "name":"2000",
+                "text": "2000円以内",
+                "value": "2000",
+                "type": "button",
+            },
+            {
+                "name":"2500",
+                "text": "2500円以内",
+                "value": "2500",
+                "type": "button",
+            },
+            {
+                "name":"3000",
+                "text": "3000円以内",
+                "value": "3000",
+                "type": "button",
+            },
+            {
+                "name":"3500",
+                "text": "3500円以内",
+                "value": "3500",
+                "type": "button",
+            },
+            {
+                "name":"4000",
+                "text": "4000円以内",
+                "value": "4000",
+                "type": "button",
+            }
+          ]
+        }]
+      }, (response, convo) => {
+        console.log(JSON.stringify(response))
         askFoodGenre(response, convo)
         convo.next()
-      } else {
-        convo.say('ちゃんと予算入力しろや!')
-        askPrice(response, convo)
-        convo.next()
-      }
+      // let match = response.text.match(/[1-9]+\d+/g)
+      // if (match) {
+      //   price = match[0]
+      //   convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
+      //   askFoodGenre(response, convo)
+      //   convo.next()
+      // } else {
+      //   convo.say('ちゃんと予算入力しろや!')
+      //   askPrice(response, convo)
+      //   convo.next()
+      // }
     })
   };
   const askFoodGenre = (response, convo) => {
