@@ -2,12 +2,12 @@ const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
-if (!process.env.token || !process.env.hotpepper_api_key || !process.env.client_id || !process.env.client_secret || !process.env.PORT) {
+if (!process.env.token || !process.env.hotpepper_api_key || !process.env.client_id || !process.env.client_secret) {
   console.log('Error: Specify token in environment')
   process.exit(1)
 }
 
-var controller = Botkit.slackbot({
+const controller = Botkit.slackbot({
   // interactive_replies: true, // tells botkit to send button clicks into conversations
   json_file_store: './db_slackbutton_bot/',
   debug: true
@@ -19,58 +19,9 @@ var controller = Botkit.slackbot({
   }
 )
 
-controller.setupWebserver(process.env.PORT,function(err,webserver) {
-  controller.createWebhookEndpoints(controller.webserver)
-
-  controller.createOauthEndpoints(controller.webserver,function(err,req,res) {
-    if (err) {
-      res.status(500).send('ERROR: ' + err)
-    } else {
-      res.send('Success!')
-    }
-  })
-})
-
-// just a simple way to make sure we don't
-// connect to the RTM twice for the same team
-var _bots = {}
-function trackBot(bot) {
-  _bots[bot.config.token] = bot
-}
-
-controller.on('create_bot', (bot,config) => {
-
-  if (_bots[bot.config.token]) {
-    // already online! do nothing.
-  } else {
-    bot.startRTM(function(err) {
-
-      if (!err) {
-        trackBot(bot)
-      }
-
-      bot.startPrivateConversation({user: config.createdBy}, (err,convo) => {
-        if (err) {
-          console.log(err)
-        } else {
-          convo.say('I am a bot that has just joined your team')
-          convo.say('You must now /invite me to a channel so that I can be of use!')
-        }
-      })
-    })
-  }
-})
-
-// Handle events related to the websocket connection to Slack
-controller.on('rtm_open', (bot) => {
-  console.log('** The RTM api just connected!')
-})
-
-controller.on('rtm_close', (bot) => {
-  console.log('** The RTM api just closed')
-  // you may want to attempt to re-open
-})
-
+const bot = controller.spawn({
+  token: process.env.token
+}).startRTM()
 
 controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention', function (bot, message) {
 
