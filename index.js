@@ -136,28 +136,77 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           ]
         }]
       }, (response, convo) => {
-        console.log(JSON.stringify(response))
         price = response.actions[0].value
         askFoodGenre(response, convo)
         convo.next()
     })
   }
+
+  let jenresAction = []
   const askFoodGenre = (response, convo) => {
-      convo.ask('料理のジャンルは？', (response, convo) => {
-        if (!!response.text) {
-          genre = response.text
-          convo.say('Umm...It\'s ok.')
-        }
-        showFoodList(response, convo)
-        convo.next()
+    request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
+      qs: {
+        key: process.env.hotpepper_api_key,
+        format: 'json'
+      }
+    }, (err, response, body) => {
+      const json = JSON.parse(body)
+      const jenres = json.results.jenre
+      jenres.forEach(jenre => {
+        jenresAction.push({
+          "text": jenre.name,
+          "value": jenre.code
+        })
       })
+      convo.next()
+    })
+    convo.ask({
+      text: "料理のジャンルは？",
+      response_type: "in_channel",
+      attachments: [
+        {
+          text: "ジャンルを選んでください．",
+          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+          color: "#3AA3E3",
+          attachment_type: "default",
+          callback_id: "jenre_selection",
+          actions: {
+            name: "jenres_list",
+            text: "Pick a jenre...",
+            type: "select",
+            options: [...jenresAction]
+          }
+        }
+      ]
+    }, (response, convo) => {
+      if (!!response.actions[0].value) {
+        genre = response.actions[0].value
+        convo.say('Umm...It\'s ok.')
+      }
+      showFoodList(response, convo)
+      convo.next()
+    })
+    // convo.ask('料理のジャンルは？', (response, convo) => {
+    //   if (!!response.text) {
+    //     genre = response.text
+    //     convo.say('Umm...It\'s ok.')
+    //   }
+    //   showFoodList(response, convo)
+    //   convo.next()
+    // })
   }
+  
   const showFoodList = (response, convo) => {
+    console.log("place: " + place)
+    console.log("price: " + price + "円")
+    console.log("genre: " + genre)
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
       qs: {
         key: process.env.hotpepper_api_key,
-        keyword: place + ',' + genre,
+        keyword: place,
+        genre: genre,
         budget: {
           average: '〜' + price
         },
