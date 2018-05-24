@@ -150,7 +150,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, (err, response, body) => {
+    }, function (err, response, body) {
       const json = JSON.parse(body)
       console.log(body)
       const genres = json.results.genre
@@ -228,11 +228,13 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
 
 controller.on('interactive_message_callback', function(bot, message) {
   if (message.callback_id == "123") {
+    console.log("price handler")
     bot.replyInteractive(message, {
       "text": "I see.\n" + message.actions[0].value + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!"
     })
   }
   if (message.callback_id == "genre_selection") {
+    console.log("genre handler")
     bot.replyInteractive(message, {
       "text": "I see.\n"
     })
