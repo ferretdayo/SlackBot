@@ -151,7 +151,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       ]
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
-      convo.say(price + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!")
+      bot.reply(message, price + " yen...\nHey, wealthy people! I spend too much money on meals. \nGive me money!")
       askFoodGenre(response, convo)
       convo.next()
     })
@@ -196,7 +196,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         ]
       }, (response, convo) => {
         genre = response.actions[0].selected_options[0].value
-        convo.say('Umm...It\'s ok.')
+        bot.reply(message, 'Umm...It\'s ok.')
         showFoodList(response, convo)
         convo.next()
       })
