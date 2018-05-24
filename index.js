@@ -164,7 +164,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       convo.ask({
         text: "料理のジャンルは？",
         response_type: "in_channel",
-        attachments: JSON.stringify([
+        attachments: [
           {
             text: "ジャンルを選んでください．",
             fallback: "If you could read this message, you'd be choosing something fun to do right now.",
@@ -180,7 +180,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
               }
             ]
           }
-        ])
+        ]
       }, (response, convo) => {
         console.log("select genre")
         genre = response.actions[0].value
