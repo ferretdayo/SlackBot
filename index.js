@@ -177,7 +177,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }).done((response) => {
-      console.log("AAAAAAAAAAAAA: " + response)
+      console.log("AAAAAAAAAAAAA: " + JSON.stringify(response))
       // const json = JSON.parse(body)
       // const genres = json.results.genre
       // genres.forEach(genre => {
