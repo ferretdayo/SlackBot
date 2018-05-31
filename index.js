@@ -90,7 +90,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       if (!!response.text && match) {
         place = response.text
         console.log("[PLACE]: " + place)
-        addReaction(bot, response, 'robot_face')
+        addReaction(bot, response, 'station')
         convo.say('It\'s nice.')
         convo.next()
         askPrice(response, convo)
