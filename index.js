@@ -170,7 +170,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askFoodGenre = async (response, convo) => {
-    let genresAction = []
     await request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
@@ -180,40 +179,39 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     }, (err, response, body) => {
       const json = JSON.parse(body)
       const genres = json.results.genre
+      let genresAction = []
       genres.forEach(genre => {
         genresAction.push({
           "text": genre.name,
           "value": genre.code
         })
       })
-      console.log("1st action")
-    })
-    console.log("2st action")
-    convo.ask({
-      text: "料理のジャンルは？",
-      response_type: "in_channel",
-      attachments: [
-        {
-          text: "ジャンルを選んでください．",
-          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
-          color: "#3AA3E3",
-          attachment_type: "default",
-          callback_id: "genre_selection",
-          actions: [
-            {
-              name: "genres_list",
-              text: "Pick a genre...",
-              type: "select",
-              options: [...genresAction]
-            }
-          ]
-        }
-      ]
-    }, (response, convo) => {
-      genre = response.actions[0].selected_options[0].value
-      convo.say('Umm...It\'s ok.')
-      showFoodList(response, convo)
-      convo.next()
+      convo.ask({
+        text: "料理のジャンルは？",
+        response_type: "in_channel",
+        attachments: [
+          {
+            text: "ジャンルを選んでください．",
+            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+            color: "#3AA3E3",
+            attachment_type: "default",
+            callback_id: "genre_selection",
+            actions: [
+              {
+                name: "genres_list",
+                text: "Pick a genre...",
+                type: "select",
+                options: [...genresAction]
+              }
+            ]
+          }
+        ]
+      }, (response, convo) => {
+        genre = response.actions[0].selected_options[0].value
+        convo.say('Umm...It\'s ok.')
+        showFoodList(response, convo)
+        convo.next()
+      })
     })
   }
   
