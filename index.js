@@ -85,7 +85,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     timestamp: message.ts,
     channel: message.channel,
     name: 'robot_face',
-  },function(err,res) {
+  }, function(err,res) {
     if (err) {
       bot.botkit.log("Failed to add emoji reaction :(", err)
     }
@@ -164,10 +164,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
       convo.say(price + " yen...\nHey, wealthy people! I spend too much money on meals. \nGive me money!")
+      askFoodGenre(response, convo)
       convo.next()
     })
-    askFoodGenre(response, convo)
-    convo.next()
   }
 
   const askFoodGenre = async (response, convo) => {
