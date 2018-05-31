@@ -90,6 +90,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       if (!!response.text && match) {
         place = response.text
         console.log("[PLACE]: " + place)
+        addReaction(bot, message, 'robot_face')
         convo.say('It\'s nice.')
         convo.next()
         askPrice(response, convo)
@@ -166,7 +167,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
       console.log("[PRICE]: " + price)
-      addReaction(bot, response, 'moneybag')
       convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
       convo.next()
       askFoodGenre(response, convo)
@@ -213,7 +213,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }, (response, convo) => {
         genre = response.actions[0].selected_options[0].value
         console.log("[GENRE]: " + genre)
-        addReaction(bot, response, 'sushi')
         convo.say('Umm...It\'s ok.')
         convo.next()
         showFoodList(response, convo)
