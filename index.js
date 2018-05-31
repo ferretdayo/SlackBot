@@ -109,16 +109,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askPrice = (response, convo) => {
-    console.log("[RESPONSE] : " + JSON.stringify(response))
-    // response.bot.api.reactions.add({
-    //   timestamp: message.ts,
-    //   channel: message.channel,
-    //   name: 'robot_face',
-    // }, function(err,res) {
-    //   if (err) {
-    //     bot.botkit.log("Failed to add emoji reaction :(", err)
-    //   }
-    // })
     convo.ask({
       text: "予算はいくら以内ですか？",
       response_type: "in_channel",
@@ -183,6 +173,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
       console.log("[PRICE]: " + price)
+      addReaction(response, 'moneybag')
       convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
       convo.next()
       askFoodGenre(response, convo)
@@ -229,6 +220,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }, (response, convo) => {
         genre = response.actions[0].selected_options[0].value
         console.log("[GENRE]: " + genre)
+        addReaction(response, 'sushi')
         convo.say('Umm...It\'s ok.')
         convo.next()
         showFoodList(response, convo)
@@ -263,3 +255,15 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
 
   bot.startConversation(message, askPlace)
 })
+
+function addReaction(response, reactionType) {
+  bot.api.reactions.add({
+    timestamp: response.ts,
+    channel: response.channel,
+    name: reactionType,
+  }, function(err,res) {
+    if (err) {
+      bot.botkit.log("Failed to add emoji reaction :(", err)
+    }
+  })
+}
