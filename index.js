@@ -1,4 +1,4 @@
-const request = require('then-request')
+const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
@@ -169,57 +169,60 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  const askFoodGenre = (response, convo) => {
+  const askFoodGenre = async (response, convo) => {
     let genresAction = []
-    request('GET', 'https://webservice.recruit.co.jp/hotpepper/genre/v1', {
+    await request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }).done((response) => {
-      console.log("AAAAAAAAAAAAA: " + JSON.stringify(response))
-      // const json = JSON.parse(body)
-      // const genres = json.results.genre
-      // genres.forEach(genre => {
-      //   genresAction.push({
-      //     "text": genre.name,
-      //     "value": genre.code
-      //   })
-      // })
+    }, (err, response, body) => {
+      const json = JSON.parse(body)
+      const genres = json.results.genre
+      genres.forEach(genre => {
+        genresAction.push({
+          "text": genre.name,
+          "value": genre.code
+        })
+      })
+      console.log("aaaaaaaaaaaaaa")
+      convo.ask({
+        text: "料理のジャンルは？",
+        response_type: "in_channel",
+        attachments: [
+          {
+            text: "ジャンルを選んでください．",
+            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+            color: "#3AA3E3",
+            attachment_type: "default",
+            callback_id: "genre_selection",
+            actions: [
+              {
+                name: "genres_list",
+                text: "Pick a genre...",
+                type: "select",
+                options: [...genresAction]
+              }
+            ]
+          }
+        ]
+      }, (response, convo) => {
+        genre = response.actions[0].selected_options[0].value
+        convo.say('Umm...It\'s ok.')
+        showFoodList(response, convo)
+        convo.next()
+      })
     })
-    convo.ask({
-      text: "料理のジャンルは？",
-      response_type: "in_channel",
-      attachments: [
-        {
-          text: "ジャンルを選んでください．",
-          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
-          color: "#3AA3E3",
-          attachment_type: "default",
-          callback_id: "genre_selection",
-          actions: [
-            {
-              name: "genres_list",
-              text: "Pick a genre...",
-              type: "select",
-              options: [...genresAction]
-            }
-          ]
-        }
-      ]
-    }, (response, convo) => {
-      genre = response.actions[0].selected_options[0].value
-      convo.say('Umm...It\'s ok.')
-      showFoodList(response, convo)
-      convo.next()
-    })
+    console.log("bbbbbbbbbbb")
   }
   
-  const showFoodList = (response, convo) => {
+  const showFoodList = async (response, convo) => {
     console.log("place: " + place)
     console.log("price: " + price + "円")
     console.log("genre: " + genre)
-    request('GET', 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1', {
+    await request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
       qs: {
         key: process.env.hotpepper_api_key,
         keyword: place,
@@ -230,12 +233,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         order: 4,
         format: 'json'
       }
-    }).done((response) => {
-      // const json = JSON.parse(body)
-      // const shops = json.results.shop
-      // shops.forEach(shop => {
-      //   bot.reply(message, shop.name + ", " + shop.urls.pc)
-      // })
+    }, (err, response, body) => {
+      const json = JSON.parse(body)
+      const shops = json.results.shop
+      shops.forEach(shop => {
+        bot.reply(message, shop.name + ", " + shop.urls.pc)
+      })
     })
     convo.next()
   }
