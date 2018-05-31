@@ -2,14 +2,41 @@ const request = require('request')
 const Botkit = require('botkit')
 const os = require('os')
 
-if (!process.env.token || !process.env.hotpepper_api_key) {
+if (!process.env.token || !process.env.hotpepper_api_key || !process.env.client_id || !process.env.client_secret) {
   console.log('Error: Specify token in environment')
   process.exit(1)
 }
 
 const controller = Botkit.slackbot({
-  debug: true,
-})
+  // interactive_replies: true, // tells botkit to send button clicks into conversations
+  json_file_store: './db_slackbutton_bot/',
+  debug: true
+}).configureSlackApp(
+  {
+    clientId: process.env.client_id,
+    clientSecret: process.env.client_secret,
+    scopes: ['bot'],
+  }
+)
+
+controller.setupWebserver(process.env.PORT,function(err,webserver) {
+
+  // set up web endpoints for oauth, receiving webhooks, etc.
+  controller
+    .createHomepageEndpoint(controller.webserver)
+    .createOauthEndpoints(controller.webserver, (err,req,res) => {
+      if (err) {
+        res.status(500).send('ERROR: ' + err)
+        console.log('Faild!')
+      } else {
+        res.send('Success!');
+        console.log('Success!')
+      }
+    })
+    .createWebhookEndpoints(controller.webserver);
+
+});
+
 
 const bot = controller.spawn({
   token: process.env.token
@@ -53,52 +80,156 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   let place = ''
   let price = 0
   let genre = ''
+
+
+  addReaction(bot, message, 'robot_face')
+
   const askPlace = (err, convo) => {
     convo.ask('最寄り駅は？(ex:\'○○駅\')', (response, convo) => {
       let match = response.text.match(/.*駅/g)
       if (!!response.text && match) {
         place = response.text
+        console.log("[PLACE]: " + place)
+        addReaction(bot, response, 'station')
         convo.say('It\'s nice.')
-        askPrice(response, convo)
         convo.next()
+        askPrice(response, convo)
       } else {
         convo.say('フォーマットは\'○○駅\'だよ！')
+        convo.next()
         askPlace(response, convo)
-        convo.next()
       }
     })
   }
+
   const askPrice = (response, convo) => {
-    convo.ask('予算はいくら以内？(半角+カンマなしで)', (response, convo) => {
-      let match = response.text.match(/[1-9]+\d+/g)
-      if (match) {
-        price = match[0]
-        convo.say('Hey, wealthy people! I spend too much money on meals. Give me money!')
-        askFoodGenre(response, convo)
-        convo.next()
-      } else {
-        convo.say('ちゃんと予算入力しろや!')
-        askPrice(response, convo)
-        convo.next()
-      }
-    })
-  };
-  const askFoodGenre = (response, convo) => {
-      convo.ask('料理のジャンルは？', (response, convo) => {
-        if (!!response.text) {
-          genre = response.text
-          convo.say('Umm...It\'s ok.')
+    convo.ask({
+      text: "予算はいくら以内ですか？",
+      response_type: "in_channel",
+      attachments: [
+        {
+          text: "金額を選んでください．",
+          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+          color: "#3AA3E3",
+          attachment_type: "default",
+          callback_id: "123",
+          actions: [
+            {
+              name: "prices_list",
+              text: "Pick a price...",
+              type: "select",
+              options: [
+                {
+                  "text": "500円以内",
+                  "value": "500"
+                },
+                {
+                  "text": "1000円以内",
+                  "value": "1000"
+                },
+                {
+                  "text": "1500円以内",
+                  "value": "1500"
+                },
+                {
+                  "text": "2000円以内",
+                  "value": "2000"
+                },
+                {
+                  "text": "2500円以内",
+                  "value": "2500"
+                },
+                {
+                  "text": "3000円以内",
+                  "value": "3000"
+                },
+                {
+                  "text": "3500円以内",
+                  "value": "3500"
+                },
+                {
+                  "text": "4000円以内",
+                  "value": "4000"
+                },
+                {
+                  "text": "4500円以内",
+                  "value": "4500"
+                },
+                {
+                  "text": "5000円以内",
+                  "value": "5000"
+                }
+              ]
+            }
+          ]
         }
-        showFoodList(response, convo)
-        convo.next()
-      })
+      ]
+    }, (response, convo) => {
+      price = response.actions[0].selected_options[0].value
+      console.log("[PRICE]: " + price)
+      convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
+      convo.next()
+      askFoodGenre(response, convo)
+    })
   }
+
+  const askFoodGenre = (response, convo) => {
+    request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
+      qs: {
+        key: process.env.hotpepper_api_key,
+        format: 'json'
+      }
+    }, (err, response, body) => {
+      const json = JSON.parse(body)
+      const genres = json.results.genre
+      let genresAction = []
+      genres.forEach(genre => {
+        genresAction.push({
+          "text": genre.name,
+          "value": genre.code
+        })
+      })
+      convo.ask({
+        text: "料理のジャンルは？",
+        response_type: "in_channel",
+        attachments: [
+          {
+            text: "ジャンルを選んでください．",
+            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+            color: "#3AA3E3",
+            attachment_type: "default",
+            callback_id: "genre_selection",
+            actions: [
+              {
+                name: "genres_list",
+                text: "Pick a genre...",
+                type: "select",
+                options: [...genresAction]
+              }
+            ]
+          }
+        ]
+      }, (response, convo) => {
+        genre = response.actions[0].selected_options[0].value
+        console.log("[GENRE]: " + genre)
+        convo.say('Umm...It\'s ok.')
+        convo.next()
+        showFoodList(response, convo)
+      })
+    })
+  }
+  
   const showFoodList = (response, convo) => {
+    console.log("place: " + place)
+    console.log("price: " + price + "円")
+    console.log("genre: " + genre)
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
       qs: {
         key: process.env.hotpepper_api_key,
-        keyword: place + ',' + genre,
+        keyword: place,
+        genre: genre,
         budget: {
           average: '〜' + price
         },
@@ -111,9 +242,20 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       shops.forEach(shop => {
         bot.reply(message, shop.name + ", " + shop.urls.pc)
       })
-      convo.next()
     })
   }
 
   bot.startConversation(message, askPlace)
 })
+
+function addReaction(bot, response, reactionType) {
+  bot.api.reactions.add({
+    timestamp: response.ts,
+    channel: response.channel,
+    name: reactionType,
+  }, function(err,res) {
+    if (err) {
+      bot.botkit.log("Failed to add emoji reaction :(", err)
+    }
+  })
+}
