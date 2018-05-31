@@ -186,7 +186,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           "value": genre.code
         })
       })
+      console.log("aaaaaaaaaaaaaa")
     })
+    console.log("bbbbbbbbbbb")
     convo.ask({
       text: "料理のジャンルは？",
       response_type: "in_channel",
