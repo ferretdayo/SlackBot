@@ -96,6 +96,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       let match = response.text.match(/.*駅/g)
       if (!!response.text && match) {
         place = response.text
+        console.log("[PLACE]: " + place)
         convo.say('It\'s nice.')
         askPrice(response, convo)
         convo.next()
@@ -137,24 +138,24 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
                   "value": "1500"
                 },
                 {
-                    "text": "2000円以内",
-                    "value": "2000"
+                  "text": "2000円以内",
+                  "value": "2000"
                 },
                 {
-                    "text": "2500円以内",
-                    "value": "2500"
+                  "text": "2500円以内",
+                  "value": "2500"
                 },
                 {
-                    "text": "3000円以内",
-                    "value": "3000"
+                  "text": "3000円以内",
+                  "value": "3000"
                 },
                 {
-                    "text": "3500円以内",
-                    "value": "3500"
+                  "text": "3500円以内",
+                  "value": "3500"
                 },
                 {
-                    "text": "4000円以内",
-                    "value": "4000"
+                  "text": "4000円以内",
+                  "value": "4000"
                 }
               ]
             }
@@ -163,7 +164,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       ]
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
-      convo.say(price + " yen...\nHey, wealthy people! I spend too much money on meals. \nGive me money!")
+      console.log("[PRICE]: " + price)
+      convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
       askFoodGenre(response, convo)
       convo.next()
     })
@@ -177,7 +179,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }, (err, response, body) => {
-      console.log(body)
       const json = JSON.parse(body)
       const genres = json.results.genre
       let genresAction = []
@@ -187,8 +188,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
           "value": genre.code
         })
       })
-      console.log(convo)
-      console.log("aaaaaaaaaaaaaa")
       convo.ask({
         text: "料理のジャンルは？",
         response_type: "in_channel",
@@ -211,12 +210,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         ]
       }, (response, convo) => {
         genre = response.actions[0].selected_options[0].value
+        console.log("[GENRE]: " + genre)
         convo.say('Umm...It\'s ok.')
         showFoodList(response, convo)
         convo.next()
       })
     })
-    console.log("bbbbbbbbbbb")
   }
   
   const showFoodList = (response, convo) => {
