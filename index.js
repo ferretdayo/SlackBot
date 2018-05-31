@@ -170,8 +170,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askFoodGenre = async (response, convo) => {
-    url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
-      await request.get({
+    await request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
