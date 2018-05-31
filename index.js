@@ -177,6 +177,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }, function (err, response, body) {
+      console.log(body)
       const json = JSON.parse(body)
       const genres = json.results.genre
       let genresAction = []
