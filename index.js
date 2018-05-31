@@ -109,6 +109,16 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askPrice = (response, convo) => {
+    console.log("[RESPONSE] : " + response)
+    // response.bot.api.reactions.add({
+    //   timestamp: message.ts,
+    //   channel: message.channel,
+    //   name: 'robot_face',
+    // }, function(err,res) {
+    //   if (err) {
+    //     bot.botkit.log("Failed to add emoji reaction :(", err)
+    //   }
+    // })
     convo.ask({
       text: "予算はいくら以内ですか？",
       response_type: "in_channel",
@@ -156,6 +166,14 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
                 {
                   "text": "4000円以内",
                   "value": "4000"
+                },
+                {
+                  "text": "4500円以内",
+                  "value": "4500"
+                },
+                {
+                  "text": "5000円以内",
+                  "value": "5000"
                 }
               ]
             }
