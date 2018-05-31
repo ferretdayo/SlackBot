@@ -1,4 +1,4 @@
-const request = require('request')
+const request = require('then-request')
 const Botkit = require('botkit')
 const os = require('os')
 
@@ -169,26 +169,24 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  const askFoodGenre = async (response, convo) => {
+  const askFoodGenre = (response, convo) => {
     let genresAction = []
-    await request.get({
-      url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
+    request('GET', 'https://webservice.recruit.co.jp/hotpepper/genre/v1', {
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, (err, response, body) => {
-      const json = JSON.parse(body)
-      const genres = json.results.genre
-      genres.forEach(genre => {
-        genresAction.push({
-          "text": genre.name,
-          "value": genre.code
-        })
-      })
-      console.log("aaaaaaaaaaaaaa")
+    }).done((response) => {
+      console.log("AAAAAAAAAAAAA: " + response)
+      // const json = JSON.parse(body)
+      // const genres = json.results.genre
+      // genres.forEach(genre => {
+      //   genresAction.push({
+      //     "text": genre.name,
+      //     "value": genre.code
+      //   })
+      // })
     })
-    console.log("bbbbbbbbbbb")
     convo.ask({
       text: "料理のジャンルは？",
       response_type: "in_channel",
