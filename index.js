@@ -98,12 +98,12 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         place = response.text
         console.log("[PLACE]: " + place)
         convo.say('It\'s nice.')
-        askPrice(response, convo)
         convo.next()
+        askPrice(response, convo)
       } else {
         convo.say('フォーマットは\'○○駅\'だよ！')
-        askPlace(response, convo)
         convo.next()
+        askPlace(response, convo)
       }
     })
   }
@@ -166,8 +166,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       price = response.actions[0].selected_options[0].value
       console.log("[PRICE]: " + price)
       convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
-      askFoodGenre(response, convo)
       convo.next()
+      askFoodGenre(response, convo)
     })
   }
 
@@ -212,8 +212,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         genre = response.actions[0].selected_options[0].value
         console.log("[GENRE]: " + genre)
         convo.say('Umm...It\'s ok.')
-        showFoodList(response, convo)
         convo.next()
+        showFoodList(response, convo)
       })
     })
   }
