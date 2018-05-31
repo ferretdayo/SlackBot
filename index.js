@@ -109,7 +109,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askPrice = (response, convo) => {
-    console.log("[RESPONSE] : " + response)
+    console.log("[RESPONSE] : " + JSON.stringify(response))
     // response.bot.api.reactions.add({
     //   timestamp: message.ts,
     //   channel: message.channel,
