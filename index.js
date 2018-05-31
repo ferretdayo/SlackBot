@@ -170,16 +170,16 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askFoodGenre = async (response, convo) => {
-    let genresAction = []
-    await request.get({
-      url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
+    url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
+      await request.get({
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, (err, response, body) => {
+    }, function (err, response, body) {
       const json = JSON.parse(body)
       const genres = json.results.genre
+      let genresAction = []
       genres.forEach(genre => {
         genresAction.push({
           "text": genre.name,
