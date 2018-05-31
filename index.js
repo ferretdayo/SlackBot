@@ -80,6 +80,17 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   let place = ''
   let price = 0
   let genre = ''
+
+  bot.api.reactions.add({
+    timestamp: message.ts,
+    channel: message.channel,
+    name: 'robot_face',
+  },function(err,res) {
+    if (err) {
+      bot.botkit.log("Failed to add emoji reaction :(", err)
+    }
+  })
+
   const askPlace = (err, convo) => {
     convo.ask('最寄り駅は？(ex:\'○○駅\')', (response, convo) => {
       let match = response.text.match(/.*駅/g)
@@ -159,8 +170,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     convo.next()
   }
 
-  const askFoodGenre = (response, convo) => {
-    request.get({
+  const askFoodGenre = async (response, convo) => {
+    let genresAction = []
+    await request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
         key: process.env.hotpepper_api_key,
@@ -169,47 +181,46 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     }, (err, response, body) => {
       const json = JSON.parse(body)
       const genres = json.results.genre
-      let genresAction = []
       genres.forEach(genre => {
         genresAction.push({
           "text": genre.name,
           "value": genre.code
         })
       })
-      convo.ask({
-        text: "料理のジャンルは？",
-        response_type: "in_channel",
-        attachments: [
-          {
-            text: "ジャンルを選んでください．",
-            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
-            color: "#3AA3E3",
-            attachment_type: "default",
-            callback_id: "genre_selection",
-            actions: [
-              {
-                name: "genres_list",
-                text: "Pick a genre...",
-                type: "select",
-                options: [...genresAction]
-              }
-            ]
-          }
-        ]
-      }, (response, convo) => {
-        genre = response.actions[0].selected_options[0].value
-        convo.say('Umm...It\'s ok.')
-        showFoodList(response, convo)
-        convo.next()
-      })
+    })
+    convo.ask({
+      text: "料理のジャンルは？",
+      response_type: "in_channel",
+      attachments: [
+        {
+          text: "ジャンルを選んでください．",
+          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+          color: "#3AA3E3",
+          attachment_type: "default",
+          callback_id: "genre_selection",
+          actions: [
+            {
+              name: "genres_list",
+              text: "Pick a genre...",
+              type: "select",
+              options: [...genresAction]
+            }
+          ]
+        }
+      ]
+    }, (response, convo) => {
+      genre = response.actions[0].selected_options[0].value
+      convo.say('Umm...It\'s ok.')
+      showFoodList(response, convo)
+      convo.next()
     })
   }
   
-  const showFoodList = (response, convo) => {
+  const showFoodList = async (response, convo) => {
     console.log("place: " + place)
     console.log("price: " + price + "円")
     console.log("genre: " + genre)
-    request.get({
+    await request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
       qs: {
         key: process.env.hotpepper_api_key,
@@ -227,24 +238,9 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       shops.forEach(shop => {
         bot.reply(message, shop.name + ", " + shop.urls.pc)
       })
-      convo.next()
     })
+    convo.next()
   }
 
   bot.startConversation(message, askPlace)
 })
-
-// controller.on('interactive_message_callback', function(bot, message) {
-//   if (message.callback_id == "123") {
-//     console.log("price handler")
-//     bot.replyInteractive(message, {
-//       "text": "I see.\n" + message.actions[0].value + " yen...\nHey, wealthy people! I spend too much money on meals. Give me money!"
-//     })
-//   }
-//   if (message.callback_id == "genre_selection") {
-//     console.log("genre handler")
-//     bot.replyInteractive(message, {
-//       "text": "I see.\n"
-//     })
-//   }
-// })
