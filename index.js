@@ -81,15 +81,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   let price = 0
   let genre = ''
 
-  bot.api.reactions.add({
-    timestamp: message.ts,
-    channel: message.channel,
-    name: 'robot_face',
-  }, function(err,res) {
-    if (err) {
-      bot.botkit.log("Failed to add emoji reaction :(", err)
-    }
-  })
+
+  addReaction(bot, message, 'robot_face')
 
   const askPlace = (err, convo) => {
     convo.ask('最寄り駅は？(ex:\'○○駅\')', (response, convo) => {
@@ -173,7 +166,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     }, (response, convo) => {
       price = response.actions[0].selected_options[0].value
       console.log("[PRICE]: " + price)
-      addReaction(response, 'moneybag')
+      addReaction(bot, response, 'moneybag')
       convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
       convo.next()
       askFoodGenre(response, convo)
@@ -220,7 +213,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }, (response, convo) => {
         genre = response.actions[0].selected_options[0].value
         console.log("[GENRE]: " + genre)
-        addReaction(response, 'sushi')
+        addReaction(bot, response, 'sushi')
         convo.say('Umm...It\'s ok.')
         convo.next()
         showFoodList(response, convo)
@@ -256,7 +249,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   bot.startConversation(message, askPlace)
 })
 
-function addReaction(response, reactionType) {
+function addReaction(bot, response, reactionType) {
   bot.api.reactions.add({
     timestamp: response.ts,
     channel: response.channel,
