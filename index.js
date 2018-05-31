@@ -169,14 +169,14 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     })
   }
 
-  const askFoodGenre = async (response, convo) => {
-    await request.get({
+  const askFoodGenre = (response, convo) => {
+    request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
         key: process.env.hotpepper_api_key,
         format: 'json'
       }
-    }, function (err, response, body) {
+    }, (err, response, body) => {
       console.log(body)
       const json = JSON.parse(body)
       const genres = json.results.genre
@@ -219,11 +219,11 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
     console.log("bbbbbbbbbbb")
   }
   
-  const showFoodList = async (response, convo) => {
+  const showFoodList = (response, convo) => {
     console.log("place: " + place)
     console.log("price: " + price + "円")
     console.log("genre: " + genre)
-    await request.get({
+    request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
       qs: {
         key: process.env.hotpepper_api_key,
@@ -241,8 +241,8 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       shops.forEach(shop => {
         bot.reply(message, shop.name + ", " + shop.urls.pc)
       })
+      convo.next()
     })
-    convo.next()
   }
 
   bot.startConversation(message, askPlace)
