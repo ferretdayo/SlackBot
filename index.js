@@ -240,7 +240,6 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       shops.forEach(shop => {
         bot.reply(message, shop.name + ", " + shop.urls.pc)
       })
-      convo.next()
     })
   }
 
