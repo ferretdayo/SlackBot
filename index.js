@@ -238,6 +238,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }, (err, response, body) => {
+      console.log(body)
       const json = JSON.parse(body)
       const shops = json.results.shop
       shops.forEach(shop => {
