@@ -76,10 +76,11 @@ controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention
   })
 })
 
-controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'direct_message,direct_mention,mention', function (bot, message) {
+controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'direct_message,direct_mention,mention', function (bot, message) {
   let place = ''
   let price = 0
   let genre = ''
+  let freeDrinkFlag = 0
 
 
   addReaction(bot, message, 'robot_face')
@@ -213,12 +214,54 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       }, (response, convo) => {
         genre = response.actions[0].selected_options[0].value
         console.log("[GENRE]: " + genre)
-        convo.say('Umm...It\'s ok.')
         convo.next()
-        showFoodList(response, convo)
+        freeDrink(response, convo)
       })
     })
-    setTimeout(() => convo.say("次はジャンルだよー"), 200)
+    setTimeout(() => convo.say("次はジャンルだよー!"), 200)
+  }
+
+  const freeDrink = (response, convo) => {
+    convo.ask({
+      text: "飲み放題がいいですか？",
+      response_type: "in_channel",
+      attachments: [
+        {
+          text: "どちらがいいか選んでください．",
+          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+          color: "#3AA3E3",
+          attachment_type: "default",
+          callback_id: "free_drink",
+          actions: [
+            {
+              name: "free_drink_option",
+              text: "Pick a option...",
+              type: "select",
+              options: [
+                {
+                  "text": "飲み放題",
+                  "value": "1"
+                },
+                {
+                  "text": "飲み放題じゃなくていい",
+                  "value": "0"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }, (response, convo) => {
+      freeDrinkFlag = parseInt(response.actions[0].selected_options[0].value)
+      console.log("[FREE DRINK FLAG]: " + freeDrinkFlag)
+      if (!!freeDrinkFlag) {
+        convo.say("Do not drink too much and do not get drunk :beers:")
+      } else {
+        convo.say("That\'s peace :innocent:")
+      }
+      convo.next()
+      showFoodList(response, convo)
+    })
   }
   
   const showFoodList = (response, convo) => {
@@ -234,6 +277,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         budget: {
           average: '〜' + price
         },
+        free_drink: freeDrinkFlag,
         order: 4,
         format: 'json'
       }
@@ -242,6 +286,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
       const shops = json.results.shop
       console.log("[SHOP LIST] : " + JSON.stringify(shops))
       if (shops.length > 0) {
+        bot.reply(message, 'Umm...It\'s ok.')
         shops.forEach(shop => {
           bot.reply(message, shop.name + ", " + shop.urls.pc)
         })
