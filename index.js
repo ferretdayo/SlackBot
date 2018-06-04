@@ -135,7 +135,12 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
                 name: "prices_list",
                 text: "Pick a price...",
                 type: "select",
-                options: [...budgetsAction]
+                options: [
+                  {
+                    name: "指定なし",
+                    value: ''
+                  },
+                  ...budgetsAction]
               }
             ]
           }
