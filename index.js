@@ -160,7 +160,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
         askFoodGenre(response, convo)
       })
     })
-    setTimeout(() => convo.say("次は予算だよー!"), 200)
+    setTimeout(() => convo.say("次は予算だよー!"), 100)
   }
 
   const askFoodGenre = (response, convo) => {
@@ -207,7 +207,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
         freeDrink(response, convo)
       })
     })
-    setTimeout(() => convo.say("次はジャンルだよー!"), 200)
+    setTimeout(() => convo.say("次はジャンルだよー!"), 100)
   }
 
   const freeDrink = (response, convo) => {
