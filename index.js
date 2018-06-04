@@ -147,13 +147,13 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
           }
         ]
       }, (response, convo) => {
-        console.log("[BUDGET RES]: " + JSON.stringify(response.actions[0].selected_options[0]))
         budget.value = response.actions[0].selected_options[0].value
         const selectedBudget = budgetsAction.filter((o, i) => {
           if (o.value == budget.value) {
             return o
           }
         })[0]
+        console.log("[BUDGET SELECTED]: " + JSON.stringify(selectedBudget))
         budget.name = !!selectedBudget.length ? selectedBudget.name : ''
         console.log("[BUDGET]: " + JSON.stringify(budget))
         convo.say(budget.name + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
