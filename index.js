@@ -104,74 +104,51 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
   }
 
   const askPrice = (response, convo) => {
-    convo.ask({
-      text: "予算はいくら以内ですか？",
-      response_type: "in_channel",
-      attachments: [
-        {
-          text: "金額を選んでください．",
-          fallback: "If you could read this message, you'd be choosing something fun to do right now.",
-          color: "#3AA3E3",
-          attachment_type: "default",
-          callback_id: "123",
-          actions: [
-            {
-              name: "prices_list",
-              text: "Pick a price...",
-              type: "select",
-              options: [
-                {
-                  "text": "500円以内",
-                  "value": "500"
-                },
-                {
-                  "text": "1000円以内",
-                  "value": "1000"
-                },
-                {
-                  "text": "1500円以内",
-                  "value": "1500"
-                },
-                {
-                  "text": "2000円以内",
-                  "value": "2000"
-                },
-                {
-                  "text": "2500円以内",
-                  "value": "2500"
-                },
-                {
-                  "text": "3000円以内",
-                  "value": "3000"
-                },
-                {
-                  "text": "3500円以内",
-                  "value": "3500"
-                },
-                {
-                  "text": "4000円以内",
-                  "value": "4000"
-                },
-                {
-                  "text": "4500円以内",
-                  "value": "4500"
-                },
-                {
-                  "text": "5000円以内",
-                  "value": "5000"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }, (response, convo) => {
-      price = response.actions[0].selected_options[0].value
-      console.log("[PRICE]: " + price)
-      convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
-      convo.next()
-      askFoodGenre(response, convo)
+    request.get({
+      url: 'https://webservice.recruit.co.jp/hotpepper/budget/v1',
+      qs: {
+        key: process.env.hotpepper_api_key,
+        format: 'json'
+      }
+    }, (err, response, body) => {
+      const json = JSON.parse(body)
+      const budgets = json.results.budget
+      let budgetsAction = []
+      budgets.forEach(budget => {
+        budgetsAction.push({
+          "text": budget.name,
+          "value": budget.code
+        })
+      })
+      convo.ask({
+        text: "予算はいくら以内ですか？",
+        response_type: "in_channel",
+        attachments: [
+          {
+            text: "金額を選んでください．",
+            fallback: "If you could read this message, you'd be choosing something fun to do right now.",
+            color: "#3AA3E3",
+            attachment_type: "default",
+            callback_id: "123",
+            actions: [
+              {
+                name: "prices_list",
+                text: "Pick a price...",
+                type: "select",
+                options: [...budgetsAction]
+              }
+            ]
+          }
+        ]
+      }, (response, convo) => {
+        price = response.actions[0].selected_options[0].value
+        console.log("[PRICE]: " + price)
+        convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
+        convo.next()
+        askFoodGenre(response, convo)
+      })
     })
+    setTimeout(() => convo.say("次は予算だよー!"), 200)
   }
 
   const askFoodGenre = (response, convo) => {
@@ -274,9 +251,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
         key: process.env.hotpepper_api_key,
         keyword: place,
         genre: genre,
-        budget: {
-          average: '〜' + price
-        },
+        budget: price,
         free_drink: freeDrinkFlag,
         order: 4,
         format: 'json'
