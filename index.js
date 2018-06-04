@@ -280,6 +280,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
       } else {
         bot.reply(message, "Sorry... I don\'t find restaurant:sob:")
       }
+      bot.reply(message, "Powered by <http://webservice.recruit.co.jp/ | ホットペッパー Webサービス>")
     })
   }
 
