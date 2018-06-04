@@ -174,6 +174,7 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
   }
 
   const askFoodGenre = (response, convo) => {
+    setTimeout(() => convo.say("次はジャンルだよー"), 300)
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/genre/v1',
       qs: {
