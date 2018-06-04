@@ -78,7 +78,7 @@ controller.hears(['(.*)って呼んで'], 'direct_message,direct_mention,mention
 
 controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(.*)ご飯(.*)', '(.*)ごはん(.*)'], 'direct_message,direct_mention,mention', function (bot, message) {
   let place = ''
-  let price = 0
+  let budget = { name: '', value:'' }
   let genre = ''
   let freeDrinkFlag = 0
 
@@ -94,7 +94,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
         addReaction(bot, response, 'station')
         convo.say('It\'s nice.')
         convo.next()
-        askPrice(response, convo)
+        askBudget(response, convo)
       } else {
         convo.say('フォーマットは\'○○駅\'だよ！')
         convo.next()
@@ -103,7 +103,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
     })
   }
 
-  const askPrice = (response, convo) => {
+  const askBudget = (response, convo) => {
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/budget/v1',
       qs: {
@@ -141,9 +141,10 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
           }
         ]
       }, (response, convo) => {
-        price = response.actions[0].selected_options[0].value
-        console.log("[PRICE]: " + price)
-        convo.say(price + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
+        budget.value = response.actions[0].selected_options[0].value
+        budget.name = response.actions[0].selected_options[0].name
+        console.log("[BUDGET]: " + budget)
+        convo.say(budget.name + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
         convo.next()
         askFoodGenre(response, convo)
       })
@@ -243,7 +244,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
   
   const showFoodList = (response, convo) => {
     console.log("place: " + place)
-    console.log("price: " + price + "円")
+    console.log("price: " + budget.name + "円")
     console.log("genre: " + genre)
     request.get({
       url: 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1',
@@ -251,7 +252,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
         key: process.env.hotpepper_api_key,
         keyword: place,
         genre: genre,
-        budget: price,
+        budget: budget.value,
         free_drink: freeDrinkFlag,
         order: 4,
         format: 'json'
