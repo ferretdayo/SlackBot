@@ -146,9 +146,10 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
           }
         ]
       }, (response, convo) => {
+        console.log("[BUDGET RES]: " + JSON.stringify(response.actions[0].selected_options[0]))
         budget.value = response.actions[0].selected_options[0].value
         budget.name = response.actions[0].selected_options[0].name
-        console.log("[BUDGET]: " + budget)
+        console.log("[BUDGET]: " + JSON.stringify(budget))
         convo.say(budget.name + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
         convo.next()
         askFoodGenre(response, convo)
