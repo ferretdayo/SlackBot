@@ -238,12 +238,16 @@ controller.hears(['(.*)お店(.*)', '(.*)居酒屋(.*)', '(.*)ランチ(.*)', '(
         format: 'json'
       }
     }, (err, response, body) => {
-      console.log(body)
       const json = JSON.parse(body)
       const shops = json.results.shop
-      shops.forEach(shop => {
-        bot.reply(message, shop.name + ", " + shop.urls.pc)
-      })
+      console.log("[SHOP LIST] : " + JSON.stringify(shops))
+      if (shops.length > 0) {
+        shops.forEach(shop => {
+          bot.reply(message, shop.name + ", " + shop.urls.pc)
+        })
+      } else {
+        bot.reply(message, "Sorry... I don\'t find restaurant:sob:")
+      }
     })
   }
 
