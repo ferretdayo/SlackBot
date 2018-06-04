@@ -153,8 +153,7 @@ controller.hears(['(.*)お店(.*)', '(.*)お酒(.*)', '(.*)飲み(.*)', '(.*)居
             return o
           }
         })[0]
-        console.log("[BUDGET SELECTED]: " + JSON.stringify(selectedBudget))
-        budget.name = !!selectedBudget.length ? selectedBudget.name : ''
+        budget.name = !!selectedBudget.length ? selectedBudget.text : ''
         console.log("[BUDGET]: " + JSON.stringify(budget))
         convo.say(budget.name + " yen...\nHey, wealthy people! You spend too much money on meals. \nGive me money!")
         convo.next()
